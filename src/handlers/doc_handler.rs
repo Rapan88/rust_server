@@ -31,7 +31,7 @@ pub async fn check_health(req: HttpRequest) -> impl Responder {
 
 pub async fn save_files(mut payload: Multipart, collection: web::Data<Collection<Document>>) -> Result<HttpResponse, Error> {
     let dir: &str = "./uploads/";
-    let mut doc = Document::default();
+    let mut doc = Document { id: String::from(Uuid::new_v4()), ..Default::default() };
 
     doc.id = String::from(Uuid::new_v4());
 
@@ -46,10 +46,10 @@ pub async fn save_files(mut payload: Multipart, collection: web::Data<Collection
             let mut saved_file: File = File::create(&destination).await.unwrap();
 
             while let Ok(Some(chunk)) = field.try_next().await {
-                let _ = saved_file.write_all(&chunk).await.unwrap();
+                saved_file.write_all(&chunk).await.unwrap();
             }
 
-            doc.file_names.push(format!("{}", field.content_disposition().get_filename().unwrap()));
+            doc.file_names.push( field.content_disposition().get_filename().unwrap().to_string());
         } else {
             let mut field_data = Vec::new();
 

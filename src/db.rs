@@ -7,7 +7,7 @@ pub async fn get_database() -> Collection<Document> {
 
     let client = Client::with_uri_str(&mongodb_uri).await.expect("Failed to connect to MongoDB");
 
-    let collection: Collection<Document> = client.database(&*mongodb_name).collection("documents");
+    let collection: Collection<Document> = client.database(&mongodb_name).collection("documents");
     collection
 }
 
